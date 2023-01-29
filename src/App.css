@@ -36,3 +36,33 @@
     transform: rotate(360deg);
   }
 }
+
+img {
+  height: 60px;
+  width: 60px;
+  display: block;
+  transition: 0.5s;
+}
+img:hover{
+   transform: scale(1.2);
+}
+
+.control_btn{
+  height: 250px;
+  width: 325px;
+  margin: 25px;
+  /* text-align: center; */
+}
+
+.control_btn::after{
+  height: 250px;
+  width: 325px;
+  margin: 25px;
+}
+
+.svgcontainer{
+  margin: auto;
+  /* display:flex;
+  justify-content: center;
+  align-items: center; */
+}
