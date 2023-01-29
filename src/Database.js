@@ -37,19 +37,25 @@ const database = getDatabase(app);
 // }
 
 
-export function writeUserData(userId, score) {
+export function writeUserData(userId, score, lat, long) {
     const db = getDatabase();
     set(ref(db, 'users/' + userId), {
-            points: score
+            points: score,
+            location: {
+                latitude: lat,
+                longitude: long
+            }
     });
 }
 
-// Borken: uses val
-function updateUserScore(userId, d_points){
+
+export function updateUserScore(userId, d_points){
     const db = getDatabase();
     let userRef = ref(db, 'users/' + userId + '/points');
-    let newpoints = userRef.val() + d_points;
-    set(userRef, newpoints);
+    get(userRef, "value").then((snap)=> {
+        let newpoints = snap.val() + d_points;
+        set(userRef, newpoints);
+    });
 }
 
 // Could use update now that I remembered to import it lol xd
@@ -59,23 +65,25 @@ export function changeEventStatus(eventId, status) {
     set(eventRef, status);
 }
 
-// Borken: uses val
-function endEvent(eventId){
+export function endEvent(eventId){
     changeEventStatus(eventId, "complete");
     const db = getDatabase();
     let pointsRef = ref(db, 'events/' + eventId + "/awarded_points");
-    let points = pointsRef.val();
     let usersRef = ref(db, 'events/' + eventId + "/current_players");
-    let users = usersRef.val();
-
-    for (let userId in users){ //add points to each user
-        updateUserScore(userId, points); 
-    }
-
-    deleteEvent(eventId);
+    get(pointsRef, "value").then((snap)=> {
+        let points = snap.val();
+        get(usersRef, "value").then((snap2)=> {
+            let users = snap2.val();
+            for (let userId in users){ //add points to each user
+                updateUserScore(userId, points); 
+            }
+            deleteEvent(eventId);
+        })
+    });
 }
 
-export function writeEventData(eventId, lat, long, datetimestart, cur_players, req_players, points, status) {
+
+export function writeEventData(eventId, lat, long, datetimestart, cur_players, req_players, points, status, name) {
     const db = getDatabase();
     set(ref(db, 'events/' + eventId), {
             location: {
@@ -87,7 +95,8 @@ export function writeEventData(eventId, lat, long, datetimestart, cur_players, r
             num_players: cur_players.length,
             required_players: req_players,
             awarded_points: points,
-            completion_status: status
+            completion_status: status,
+            event_name: name
     })
     // console.log()
 
@@ -112,20 +121,23 @@ export function writeEventData(eventId, lat, long, datetimestart, cur_players, r
 
 }
 
-// Broken (uses .val())
-function addUserToEvent(eventId, userId){
+
+export function addUserToEvent(eventId, userId){
     const db = getDatabase();
     // let eventRef = ref(db, "events/" + eventId);
     let usersRef = ref(db, "events/" + eventId + "/current_players");
-    let users = usersRef.val().push(userId);
-    set(usersRef, users);
-    incrementEvent(eventId);  
+    incrementEvent(eventId); 
+    get(usersRef, "value").then((snap)=> {
+        let users = snap.val().push(userId);
+        set(usersRef, users);
+    }); 
 }
+
 
 export function incrementEvent(eventId) {
     const db = getDatabase();
     let numPlayersRef = ref(db, 'events/' + eventId + '/num_players')
-    
+
     // Accessing the value of a reference
     get(numPlayersRef, "value").then((snap)=> {
         let newNum = snap.val() + 1;
@@ -133,15 +145,31 @@ export function incrementEvent(eventId) {
     });
 }
 
+
 export function deleteEvent(eventId){
     const db = getDatabase();
     let deleteRef = ref(db, "events/" + eventId);
     remove(deleteRef);
 }
 
+
 export function deleteUser(userId){
     const db = getDatabase();
     let deleteRef = ref(db, "users/" + userId);
     remove(deleteRef);
+}
+
+export function getEventCoordinates(eventId) {
+    const db = getDatabase();
+    let eventRef = ref(db, "events/" + eventId + "/location");
+    get(eventRef, "value").then((snap) => {
+        return [snap.val()['latitude'], snap.val()['longitude']];
+    })
+}
+
+export async function getEventName(eventId) {
+    const db = getDatabase();
+    let eventRef = ref(db, "events/" + eventId + "/event_name");
+    return await get(eventRef, "value"); // Returns the Promise
 }
 
