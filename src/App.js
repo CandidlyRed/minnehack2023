@@ -98,7 +98,7 @@ function App() {
       return name;
     }
     let n = await promise.then(success);
-    return n;
+    return await n;
   }
   console.log(getEventNameString(1) + "HERE");
 
@@ -159,7 +159,7 @@ function App() {
           onClose={() => setShowPopup(false)}>
             {/* '${getTest}' */}
           {/* '${database.getEventName(1).then((name) => [name])}' */}
-          <b>Minneapolis</b><br></br>
+          Minneapolis<br></br>
           1500 points{/* getEventCoordinates(1); getEventName(1) */}
         </Popup>)}
       </Marker>
@@ -243,7 +243,7 @@ function App() {
           anchor="bottom"
           onClose={() => setShowPopup6(false)}>
           {/*'${database.getEventName(1)}'*/}
-          Event{/* getEventCoordinates(1); getEventName(1) */}
+          <div backgroundcolor="brown">===Event===<br></br>1500 points</div>{/* getEventCoordinates(1); getEventName(1) */}
         </Popup>)}
       </Marker>
     </Map>
