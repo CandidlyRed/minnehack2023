@@ -8,14 +8,15 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import mapboxgl from "mapbox-gl"
-import {writeEventData, writeUserData, incrementEvent} from './Database.js';
+import {writeEventData, writeUserData, changeEventStatus, incrementEvent} from './Database.js';
 import glasssvg from "./icons/glass.svg";
 import plasticsvg from "./icons/plastic.svg";
 import metalsvg from "./icons/metal.svg";
 import organicsvg from "./icons/organic.svg";
 import papersvg from "./icons/paper.svg";
 import othersvg from "./icons/other.svg";
-
+// import happy from "./models/happy/"
+// import sad from "./models/sad/"
 
 
 function App() {
@@ -29,10 +30,11 @@ function App() {
   };
   const writeUD = () => {writeUserData(400,400)};
   const writeED = () => {writeEventData(0, 0, 0, 0, [], 1, 0, "not started")};
-  const incrementEv = () => {incrementEvent(0)};
+  const changeE = () => {changeEventStatus(0, "Morbin")};
+  const incrementE = () => {incrementEvent(0)};
 
     // parameters to ensure the model is georeferenced correctly on the map
-    const modelOrigin = [148.9819, -35.39847];
+    const modelOrigin = [-93, 45];
     const modelAltitude = 0;
     const modelRotate = [Math.PI / 2, 0, 0];
 
@@ -163,19 +165,31 @@ function App() {
         <div style={{textAlign: 'center'}}>
           <div style={{fontWeight: 'bold'}}>Reach 100 points for redemption</div>
           <br></br>
-          <ProgressBar variant="success" now={counter} label={`${counter}%`} min-width={"1000vh"}/>
+          <ProgressBar id="progressbar_id" variant="success" now={counter} label={`${counter}%`} min-width={"1000vh"}/>
           <br></br>
-          <button className="control_btn" onClick={increase} style={{backgroundColor: "#3367AE"}}><img src={plasticsvg} viewBox="0 0 13 22" class="svgcontainer"></img></button>
-          <button className="control_btn" onClick={increase} style={{backgroundColor: "#13A84D"}}><img src={organicsvg} viewBox="0 0 13 22" class="svgcontainer"></img></button>
-          <button className="control_btn" onClick={increase} style={{backgroundColor: "#FDB719"}}><img src={papersvg} viewBox="0 0 13 22" class="svgcontainer"></img></button>
-          <button className="control_btn" onClick={increase} style={{backgroundColor: "#FDB719"}}><img src={glasssvg} viewBox="0 0 13 22" class="svgcontainer"></img></button>
-          <button className="control_btn" onClick={increase} style={{backgroundColor: "#EC2C24"}}><img src={metalsvg} viewBox="0 0 13 22" class="svgcontainer"></img></button>
-          <button className="control_btn" onClick={increase} style={{backgroundColor: "#55697B"}}><img src={othersvg} viewBox="0 0 13 22" class="svgcontainer"></img></button>
+          <button className="control_btn" onClick={increase} style={{backgroundColor: "#3367AE"}}><img src={plasticsvg} viewBox="0 0 13 22" class="svgcontainer"></img>Plastic</button>
+          <button className="control_btn" onClick={increase} style={{backgroundColor: "#13A84D"}}><img src={organicsvg} viewBox="0 0 13 22" class="svgcontainer"></img>Organic</button>
+          <button className="control_btn" onClick={increase} style={{backgroundColor: "#FDB719"}}><img src={papersvg} viewBox="0 0 13 22" class="svgcontainer"></img>Paper</button>
+          <button className="control_btn" onClick={increase} style={{backgroundColor: "#FDB719"}}><img src={glasssvg} viewBox="0 0 13 22" class="svgcontainer"></img>Glass</button>
+          <button className="control_btn" onClick={increase} style={{backgroundColor: "#EC2C24"}}><img src={metalsvg} viewBox="0 0 13 22" class="svgcontainer"></img>Metal</button>
+          <button className="control_btn" onClick={increase} style={{backgroundColor: "#55697B"}}><img src={othersvg} viewBox="0 0 13 22" class="svgcontainer"></img>Other</button>
           
           <button className="control_btn" onClick={writeUD} style={{backgroundColor: "#FFFFFF"}}>write user data</button>
-          <button className="control_btn" onClick={incrementEv} style={{backgroundColor: "#FFFFFF"}}>write event data</button>
+          <button className="control_btn" onClick={writeED} style={{backgroundColor: "#FFFFFF"}}>write event data</button>
+          <button className="control_btn" onClick={incrementE} style={{backgroundColor: "#FFFFFF"}}>increment event status</button>
         </div>
       </SlidingPane>
+
+      <script>
+        const progressbar = document.getElementById("progressbar_id");
+
+        progressbar.addEventListener("click", function(event){
+          if (progressbar.now > 100) {
+            console.log("100!!!");
+          }
+        })
+      
+      </script>
     </div>
   )
 }

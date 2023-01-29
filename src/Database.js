@@ -46,18 +46,15 @@ export function writeUserData(userId, score) {
 
 function updateUserScore(userId, d_points){
     const db = getDatabase();
-    let userRef = ref(db, 'users/' + userId);
+    let userRef = ref(db, 'users/' + userId + '/points');
     let newpoints = userRef.val() + d_points;
-    userRef.update({
-        points: newpoints
-    });
+    set(userRef, newpoints);
 }
 
-function changeEventStatus(eventId, status) {
+export function changeEventStatus(eventId, status) {
     const db = getDatabase();
-    set(ref(db, 'events/' + eventId), {
-        completion_status: status
-    })
+    let eventRef = ref(db, 'events/' + eventId + '/completion_status');
+    set(eventRef, status);
 }
 
 function endEvent(eventId){
@@ -89,36 +86,35 @@ export function writeEventData(eventId, lat, long, datetimestart, cur_players, r
             awarded_points: points,
             completion_status: status
     })
+    // console.log()
 
-    let eventStartCountdown = setInterval(function () {
-        let currentdate = new Date();
-        if (currentdate > datetimestart.val()){
-            changeEventStatus(eventId, "in-progress");
+    // TODO: Console complains about this
+    // let eventStartCountdown = setInterval(function () {
+    //     let currentdate = new Date();
+    //     if (currentdate > datetimestart.val()){
+    //         console.log("IP");
+    //         changeEventStatus(eventId, "in-progress");
 
-            let eventEndCountdown = setInterval(function () {
-                let currentdate = new Date();
-                if (currentdate > datetimestart.val()){
-                    endEvent(eventId);
-                    clearInterval(eventEndCountdown);
-                }
-            }, 1000)
+    //         let eventEndCountdown = setInterval(function () {
+    //             let currentdate = new Date();
+    //             if (currentdate > datetimestart.val()){
+    //                 endEvent(eventId);
+    //                 clearInterval(eventEndCountdown);
+    //             }
+    //         }, 1000)
 
-            clearInterval(eventStartCountdown);
-        }
-    }, 1000);
+    //         clearInterval(eventStartCountdown);
+    //     }
+    // }, 1000);
 
 }
 
 function addUserToEvent(eventId, userId){
     const db = getDatabase();
-    let eventRef = ref(db, "events/" + eventId);
+    // let eventRef = ref(db, "events/" + eventId);
     let usersRef = ref(db, "events/" + eventId + "/current_players");
     let users = usersRef.val().push(userId);
-
-    eventRef.update({
-        current_players: users
-    });
-    
+    set(usersRef, users);
     incrementEvent(eventId);  
 }
 
@@ -127,10 +123,7 @@ export function incrementEvent(eventId) {
     const db = getDatabase();
     let numPlayersRef = ref(db, 'events/' + eventId + '/num_players')
     let newNum = numPlayersRef.val() + 1
-    console.log(newNum)
-    numPlayersRef.update({
-        num_players: newNum
-    });
+    set(numPlayersRef, newNum);
 }
 
 function deleteEvent(eventId){
