@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, get, set } from "firebase/database";
+import { getDatabase, ref, get, set, remove, update } from "firebase/database";
 
 const firebaseConfig = {
   // The value of `databaseURL` depends on the location of the database
@@ -44,6 +44,7 @@ export function writeUserData(userId, score) {
     });
 }
 
+// Borken: uses val
 function updateUserScore(userId, d_points){
     const db = getDatabase();
     let userRef = ref(db, 'users/' + userId + '/points');
@@ -51,12 +52,14 @@ function updateUserScore(userId, d_points){
     set(userRef, newpoints);
 }
 
+// Could use update now that I remembered to import it lol xd
 export function changeEventStatus(eventId, status) {
     const db = getDatabase();
     let eventRef = ref(db, 'events/' + eventId + '/completion_status');
     set(eventRef, status);
 }
 
+// Borken: uses val
 function endEvent(eventId){
     changeEventStatus(eventId, "complete");
     const db = getDatabase();
@@ -109,6 +112,7 @@ export function writeEventData(eventId, lat, long, datetimestart, cur_players, r
 
 }
 
+// Broken (uses .val())
 function addUserToEvent(eventId, userId){
     const db = getDatabase();
     // let eventRef = ref(db, "events/" + eventId);
@@ -118,23 +122,26 @@ function addUserToEvent(eventId, userId){
     incrementEvent(eventId);  
 }
 
-// Increments number of participants of an event
 export function incrementEvent(eventId) {
     const db = getDatabase();
     let numPlayersRef = ref(db, 'events/' + eventId + '/num_players')
-    let newNum = numPlayersRef.val() + 1
-    set(numPlayersRef, newNum);
+    
+    // Accessing the value of a reference
+    get(numPlayersRef, "value").then((snap)=> {
+        let newNum = snap.val() + 1;
+        set(numPlayersRef, newNum);
+    });
 }
 
-function deleteEvent(eventId){
+export function deleteEvent(eventId){
     const db = getDatabase();
     let deleteRef = ref(db, "events/" + eventId);
-    deleteRef.remove();  
+    remove(deleteRef);
 }
 
-function deleteUser(userId){
+export function deleteUser(userId){
     const db = getDatabase();
-    let deleteRef = db.ref(db, "users/" + userId);
-    deleteRef.remove();
+    let deleteRef = ref(db, "users/" + userId);
+    remove(deleteRef);
 }
 
