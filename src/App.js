@@ -89,17 +89,18 @@ function App() {
   async function getEventNameString(index){
     let promise = database.getEventName(index);
     async function success(p){
-      console.log(p)
+      // console.log(p)
+      // console.log("SSSSSSSSSSSSSSSSS")
       let node = await p._node;
-      console.log(node)
+      // console.log(node)
       let name = await node.value_;
-      console.log(name + "sfsdfsdfSDFDsdfs");
+      // console.log(name + "sfsdfsdfSDFDsdfs");
       return name;
     }
-    let n = await success(promise);
+    let n = await promise.then(success);
     return n;
   }
-  getEventNameString(1);
+  console.log(getEventNameString(1) + "HERE");
 
   const getTest = () => {
     console.log("GET TEST-------------------------------------")
@@ -158,7 +159,7 @@ function App() {
           onClose={() => setShowPopup(false)}>
             {/* '${getTest}' */}
           {/* '${database.getEventName(1).then((name) => [name])}' */}
-          Minneapolis
+          <b>Minneapolis</b><br></br>
           1500 points{/* getEventCoordinates(1); getEventName(1) */}
         </Popup>)}
       </Marker>
@@ -172,7 +173,7 @@ function App() {
           anchor="bottom"
           onClose={() => setShowPopup1(false)}>
           {/* {database.getEventName(1)} */}
-          St. Paul
+          St. Paul<br></br>
           1600 points{/* getEventCoordinates(1); getEventName(1) */}
         </Popup>)}
       </Marker>
@@ -186,8 +187,8 @@ function App() {
           anchor="bottom"
           onClose={() => setShowPopup2(false)}>
           {/* '${database.getEventName(1)}' */}
-          Maplewood
-          1500 poin{/* getEventCoordinates(1); getEventName(1) */}
+          Maplewood<br></br>
+          1500 points{/* getEventCoordinates(1); getEventName(1) */}
         </Popup>)}
       </Marker>
       <Marker longitude={-92.9952} latitude={44.9530} anchor="center" onClick={e => {
@@ -200,7 +201,8 @@ function App() {
           anchor="bottom"
           onClose={() => setShowPopup3(false)}>
           {/* '${database.getEventName(1)}' */}
-          Maplewood{/* getEventCoordinates(1); getEventName(1) */}
+          Maplewood<br></br>
+          500 points{/* getEventCoordinates(1); getEventName(1) */}
         </Popup>)}
       </Marker>
       <Marker longitude={-93.1566} latitude={45.0061} anchor="center" onClick={e => {
@@ -213,7 +215,8 @@ function App() {
           anchor="bottom"
           onClose={() => setShowPopup4(false)}>
           {/* '${database.getEventName(1)}' */}
-          Roseville{/* getEventCoordinates(1); getEventName(1) */}
+          Roseville<br></br>
+          600 points{/* getEventCoordinates(1); getEventName(1) */}
         </Popup>)}
       </Marker>
       <Marker longitude={-93.1472} latitude={45.0791} anchor="center" onClick={e => {
@@ -226,7 +229,8 @@ function App() {
           anchor="bottom"
           onClose={() => setShowPopup5(false)}>
           
-          Shoreview{/* getEventCoordinates(1); getEventName(1) */}
+          Shoreview<br></br>
+          800 points{/* getEventCoordinates(1); getEventName(1) */}
         </Popup>)}
       </Marker>
       <Marker longitude={-93.2354} latitude={44.9731} anchor="center" style={{borderRadius:'50%'}} onClick={e => {
@@ -238,8 +242,8 @@ function App() {
         <Popup longitude={-93.2354} latitude={44.9731}
           anchor="bottom"
           onClose={() => setShowPopup6(false)}>
-          '${database.getEventName(1)}'
-          test{/* getEventCoordinates(1); getEventName(1) */}
+          {/*'${database.getEventName(1)}'*/}
+          Event{/* getEventCoordinates(1); getEventName(1) */}
         </Popup>)}
       </Marker>
     </Map>
